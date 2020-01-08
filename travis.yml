@@ -1,0 +1,39 @@
+dist: xenial
+services:
+- postgresql
+branches:
+  only:
+  - master
+  - develop
+addons:
+  postgresql: '9.4'
+
+notifications:
+  email: false
+
+before_script:
+- psql -U postgres -c "create user egc_exam password 'egc_exam'"
+- psql -U postgres -c "create database test_decide owner egc_exam"
+- psql -U postgres -c "ALTER USER egc_exam CREATEDB"
+language: python
+python:
+- '3.6'
+install:
+- pip install -r requirements.txt
+- pip install codacy-coverage
+script:
+- cd decide
+- cp travis_local_settings.py local_settings.py
+- python ./manage.py makemigrations
+- python ./manage.py migrate
+- python ./manage.py test --keepdb
+- coverage run --branch --source=. ./manage.py test --keepdb
+- coverage xml
+- python-codacy-coverage -r coverage.xml
+- rm local_settings.py
+#deploy:
+#  provider: heroku
+#  app: nuevaappaguza
+#  strategy: git
+#  api_key:
+#    secure: I9xUd4dPSHmDfH2b9cmRFIcCwAw/DyC75o7u+wktN1M/b+bZSaqkh4Owqea6pVdIXBPKecsb38kPS5iwg6qbLJfgQZ9tlWVv12XgVhTAGQ8uqoGi1lDuwOE6Jyua+GPj6mdgCFNHWF1IDFR+FMlacWtmCl+hw0L38EBFZJWh/zUnryfZXacVsLv7cYk2F3iWdTE887FsLQ0R9SWT/JDneCkGXq7GRpPr3QtErLMN0cU+k3q9QbL1hCwIcoMXZY43C+w4n+xzuOg2nY6MbKctAXI9clLiHk5uriddWvwJBgz5pOvBH11F9JwZAdXEQnGGxO4TNR0r0mOx54bLZu3IY6bQpb6rSvhqmD+KBBgxFCNDhMSNLbbmeCBooJNeXqCIhDKjw/R4JZtduLUzKdNkcjvNiIIj4RK5OwxMgLA7R9QrVaLVWrsRXW9cpK8MnfJOUx6f/86OQ9i6Y7H9dNAuxd3jH0SV2QcQArz8VD2HEw1d9GR3jUqnCkOhAv1/wGroTwN7+/J02EhMW34PbgxKhO159Hgo5CimzLcaowQWCo88HTx0U8j246i0zzVj/kR0KDxC/7JLjwBeZSCt6+w7yK/Ia1wZFCdzxK7xjhr5fxSMt7IuW9ftFWVsW3GVP1r0QVBZCbnnE0gW76hfnJNpI99xSvTebuvs2o58ipXfiHo=
