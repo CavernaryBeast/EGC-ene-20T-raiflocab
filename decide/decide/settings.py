@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -70,7 +71,21 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'http://localhost:8000'
+BASEURL = 'https://egc-exam.herokuapp.com'
+
+APIS = {
+    'authentication': 'https://egc-exam.herokuapp.com',
+    'base': 'https://egc-exam.herokuapp.com',
+    'booth': 'https://egc-exam.herokuapp.com',
+    'census': 'https://egc-exam.herokuapp.com',
+    'mixnet': 'https://egc-exam.herokuapp.com',
+    'postproc': 'https://egc-exam.herokuapp.com',
+    'store': 'https://egc-exam.herokuapp.com',
+    'gateway': 'https://egc-exam.herokuapp.com',
+    'visualizer': 'https://egc-exam.herokuapp.com',
+    'voting': 'https://egc-exam.herokuapp.com',
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -180,3 +195,5 @@ if os.path.exists("config.jsonnet"):
 
 
 INSTALLED_APPS = INSTALLED_APPS + MODULES
+
+django_heroku.settings(locals())
